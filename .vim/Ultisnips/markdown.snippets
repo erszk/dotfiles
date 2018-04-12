@@ -1,0 +1,55 @@
+#### GLOBALS
+global !p
+import pyperclip
+def paste():
+	return pyperclip.paste()
+endglobal
+####
+
+
+#### BASIC MARKUP
+snippet b "bold" w
+**${1:bold}**$0
+endsnippet
+
+snippet i "italics" w
+*${1:ital}*$0
+endsnippet
+
+snippet m "monospace" w
+\`${1:monospace}\`$0
+endsnippet
+
+snippet s "strikethrough" w
+~~${1:strikethrough}~~$0
+endsnippet
+####
+
+
+#### LINKS
+snippet l "link" w
+[${1:link text}]($2`!p snip.rv = paste()`)$0
+endsnippet
+####
+
+
+#### LISTS
+snippet ul "unordered list item" b
+* ${1:item}$0
+endsnippet
+####
+
+
+#### HEADERS
+snippet mh "Setext-style main header" b
+${1:header}
+${1/./=/g}
+$0
+endsnippet
+
+snippet sh "Setext-style subheader" b
+${1:header}
+${1/./-/g}
+$0
+endsnippet
+####

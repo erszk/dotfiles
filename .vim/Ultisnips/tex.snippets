@@ -1,0 +1,216 @@
+#### PREAMBLE
+snippet dc "documentclass" b
+\documentclass[${1:X}]{${2:class}}$0
+endsnippet
+
+snippet up "usepackage" b
+\usepackage$1{${2:package}}$0
+endsnippet
+
+snippet nc "newcommand" b
+\newcommand\{${1:new}\}\{${2:old}\}$0
+endsnippet
+####
+
+
+#### FULL-DOC TEMPLATES
+snippet chic "Chicago Style (notes)" b
+\documentclass[12pt]{article}%{{{
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage[notes, isbn=false, backend=biber]{biblatex-chicago}
+\addbibresource{../bib/${3:bibfile}.bib}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\rfoot{\thepage}%}}}
+
+\begin{document}
+\nocite{*} % comment out or delete after first citation
+\frenchspacing
+
+\noindent Louis Thompson\\\\
+${1:class}\\\\
+% professor\\\\
+\today
+\begin{center}
+	${2:title}
+\end{center}
+\doublespacing
+
+$0
+
+\cleardoublepage
+\printbibliography
+\end{document}
+endsnippet
+####
+
+
+#### TABLES
+snippet mp2 "side-by-side figures using minipage" b
+\begin{figure}[htp]
+\centering
+	\begin{minipage}{3in}
+		\centering
+		${1:\includegraphics[${2:width = \linewidth}]{${3:file}}}
+		\caption{${4:caption}}
+		\label{fig:${5:label}}
+	\end{minipage}%
+	\hspace{0.5in}%
+	\begin{minipage}{3in}
+		\centering
+		${6:\includegraphics[${7:width = \linewidth}]{${8:file}}}
+		\caption{${9:caption}}
+		\label{fig:${10:label}}
+\end{minipage}
+\end{figure}$0
+endsnippet
+####
+
+
+#### ENVIRONMENTS
+snippet /\\?beg(in)?/ "begin" r
+\begin$1{${2:env}}$3
+	$4
+\end{$2}$0
+endsnippet
+
+snippet figure "typical figure environment" b
+\begin{figure}[${1:htp}]
+	\centering
+	${1:\includegraphics[width=${2:3}in]{${3:file}}}
+	\caption{${4:caption}}
+	\label{${5:fig}:${6:label}}
+\end{figure}$0
+endsnippet
+
+snippet quote "single spaced block quote" b
+\begin{quote}
+\singlespacing
+	$0
+\end{quote}
+endsnippet
+####
+
+
+#### BASIC MARKUP
+snippet e "emph" w
+{\em $1}$0
+endsnippet
+
+snippet b "bold" w
+{\bf $1}$0
+endsnippet
+
+snippet q "German quotes" w
+,,$1\`\`$0
+endsnippet
+####
+
+
+#### CODE DISPLAY
+snippet lst "for code listings from source" b
+\section{${1:description}}
+\label{app:${2:label}}
+\lstinputlisting[language=${3:language}]{${4:path}}$0
+endsnippet
+
+snippet mycode "my code display settings" b
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.9]{beramono}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+	basicstyle=\footnotesize\ttfamily,
+	breaklines=true,
+	captionpos=b,
+	commentstyle=\color{mygreen},
+	escapeinside={\%*}{*)},
+	frame=single,
+	keywordstyle=\color{blue},
+	numbers=left,
+	numbersep=8pt,
+	numberstyle=\tiny,
+	stringstyle=\color{mymauve},
+	showstringspaces=False,
+}$0
+endsnippet
+####
+
+
+#### CITATIONS, FOOTNOTES, BIBLIOGRAPHY
+snippet fc "Footcite snippet" i
+~\footcite[$1]{${2:source}}$0
+endsnippet
+
+snippet cite "general purpose cite" i
+~\cite[$1]{${2:source}}$0
+endsnippet
+
+snippet fn "footnote" i
+\footnote{$1}$0
+endsnippet
+
+snippet bib "a path customized bib snippet" b
+\cleardoublepage
+\bibliographystyle{${1:plain}}
+\bibliography{../bib/${2:class}.bib}$0
+endsnippet
+####
+
+
+#### REFERENCING
+snippet comref "for comparisons between two things" w
+${1:Figures}~\ref\{${2:fig}:$3\} and~\ref\{$2:$4\}$0
+endsnippet
+
+snippet ex "for referencing examples" w
+Example~\ref\{ex:$1\}$0
+endsnippet
+
+snippet rangeref "for referencing a range of things" w
+${1:Example}s~\ref\{${2:ex}:$3\}--\ref\{$2:$4\}$0
+endsnippet
+
+snippet fig "for referencing figures" w
+Figure~\ref\{${1:fig}:$2\}$0
+endsnippet
+
+snippet sec "for referencing sections" w
+Section~\ref\{sec:${1:section}\}$0
+endsnippet
+
+snippet tab "for referencing tables" w
+Table~\ref\{tab:${1:table}\}$0
+endsnippet
+####
+
+
+#### DIVISIONS
+snippet section "section" b
+\section{${1:section}}
+\label{sec:${2:label}}$0
+endsnippet
+####
+
+
+#### GB4E
+snippet exe "gb4e example" b
+\begin{exe}
+	\ex\label{ex:${1:example}}$0
+\end{exe}
+endsnippet
+
+snippet exlab "create and label a gb4e example" b
+\ex\label{ex:${1:example}}$0
+endsnippet
+####

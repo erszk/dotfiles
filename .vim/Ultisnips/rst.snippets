@@ -1,0 +1,142 @@
+#### GLOBALS
+global !p
+import pyperclip
+def paste():
+	return pyperclip.paste()
+endglobal
+####
+
+
+#### BASIC MARKUP
+snippet b "bold" w
+**${1:bold}**$0
+endsnippet
+
+snippet i "italics" w
+*${1:italic}*$0
+endsnippet
+
+snippet m "monospace" w
+\`\`${1:monospace}\`\`$0
+endsnippet
+####
+
+
+#### DIRECTIVES
+# generic
+snippet d "generic directive" b
+.. ${1:directive}:: ${2:arg}
+endsnippet
+
+# citations
+snippet c "reference a citation" w
+[${1:ref}]_
+endsnippet
+
+snippet mc "make a citation" b
+.. [${1:ref}] ${2:citation}
+endsnippet
+
+# footnotes
+snippet f "make a footnote"
+.. [#] ${1:footnote}
+endsnippet
+
+snippet fn "start footnote section" b
+.. rubric:: Footnotes
+
+f$0
+endsnippet
+
+snippet fr "reference a footnote" w
+[#]_$0
+endsnippet
+
+# hyperlinks
+snippet l "reference a link" w
+\`${1:ref}\`_ $0
+endsnippet
+
+snippet ld "define a link reference" b
+.. _${1:ref}: $2`!p snip.rv=paste()`$0
+endsnippet
+
+# substitutions
+snippet sub "reST substitution" b
+.. |${1:ref}| ${2:replace}:: ${3:thing}
+endsnippet
+####
+
+
+#### LISTS
+snippet ol "ordered list item" b
+#. ${1:item}
+endsnippet
+
+snippet ul "unordered list item" b
+* ${1:item}
+endsnippet
+####
+
+
+#### HEADERS AND SECTIONS
+snippet ch "chapter" b
+${1/./\*/g}
+${1:header}
+${1/./\*/g}$0
+endsnippet
+
+snippet pt "part" b
+${1/./#/g}
+${1:header}
+${1/./#/g}$0
+endsnippet
+
+snippet s "section" b
+${1:header}
+${1/./=/g}$0
+endsnippet
+
+snippet ss "subsection" b
+${1:header}
+${1/./-/g}$0
+endsnippet
+
+snippet sss "subsubsection" b
+${1:header}
+${1/./\^/g}$0
+endsnippet
+####
+
+
+#### SHIELDS
+snippet trav "Travis CI build status shield" b
+.. image:: https://img.shields.io/travis/erszk/${1:repo}.svg
+	:target: https://travis-ci.org/github/erszk/$1$0
+endsnippet
+
+snippet cov "Coveralls.io coverage shield" b
+.. image:: https://img.shields.io/coveralls/github/erszk/${1:repo}.svg
+	:target: https://coveralls.io/github/erszk/$1$0
+endsnippet
+
+snippet pypiv "Pypi version shield" b
+.. image:: https://img.shield.io/pypi/v/${1:repo}.svg
+	:target: https://pypi.python.org/pypi/$1$0
+endsnippet
+
+snippet pypidm "Pypi monthly downloads shield" b
+.. image:: https://img.shields.io/pypi/dm/${1:repo}.svg
+	:target: https://pypi.python.org/pypi/$1$0
+endsnippet
+
+snippet ghd "Github downloads shield" b
+.. image:: https://img.shields.io/github/downloads/erszk/${1:repo}/latest/total.svg
+	:target: https://github.com/erszk/$1$0
+endsnippet
+
+snippet pypil "Pypi license snippet" b
+.. image:: https://img.shields.io/pypi/l/${1:repo}.svg
+	:target: https://pypi.python.org/pypi/$1$0
+endsnippet
+####

@@ -1,0 +1,43 @@
+# SHEBANG
+snippet sb "Python3 shebang line" b
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-$0
+endsnippet
+
+snippet sb2 "Python2 shebang" b
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-$0
+endsnippet
+
+snippet enc "encoding" b
+# -*- coding: utf-8 -*-$0
+endsnippet
+
+
+# DOCSTRINGS
+snippet sl "string literal" w
+"""$1"""$0
+endsnippet
+
+snippet ds "docstring following Google guidelines" b
+"""
+${1:A short description}
+
+Args:
+	${2:first} (${3:type}): ${4:description}
+Returns:
+	${5:value}: ${6:description}
+Raises:
+	${7:error}: ${8:condition}
+"""$0
+endsnippet
+
+
+
+snippet p "print" b
+print($1)
+endsnippet
+
+snippet ps "pass" b
+pass  # FIX
+endsnippet

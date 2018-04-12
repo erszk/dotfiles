@@ -1,0 +1,65 @@
+snippet pl "launchd plist template" b
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key><string>`echo $USER`.${1:Label}</string>
+	<key>EnableGlobbing</key><true/>
+	<key>ProgramArguments</key>
+	<array>
+		<string>${2:command}</string>$0
+	</array>
+</dict>
+</plist>
+endsnippet
+
+snippet k "XML key" b
+<key>$1</key>
+endsnippet
+
+snippet s "XML string" b
+<string>$1</string>
+endsnippet
+
+snippet i "XML integer" b
+<integer>$1</integer>
+endsnippet
+
+snippet a "XML array" b
+<array>
+	$1
+</array>
+endsnippet
+
+snippet d "XML dictionary" b
+<dict>
+	$1
+</dict>
+endsnippet
+
+snippet sci "launchd StartCalendarInterval" b
+<key>StartCalendarInterval</key>
+<dict>
+	$0
+</dict>
+endsnippet
+
+snippet hr "launchd hour" b
+<key>Hour</key>
+	<integer>${1:0-24}</integer>
+endsnippet
+
+snippet min "launchd min" b
+<key>Minute</key>
+	<integer>${1:0-60}</integer>
+endsnippet
+
+snippet wkd "launchd weekday" b
+<key>Weekday</key>
+	<integer>${1:0-7}</integer>
+endsnippet
+
+snippet mo "launchd month" b
+<key>Month</key>
+	<integer>${1:1-12}</integer>
+endsnippet
