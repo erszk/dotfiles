@@ -1,0 +1,17 @@
+[alias]
+	a = add
+	b = branch
+	c = commit
+	ck = checkout
+	d = diff
+	l = log --oneline
+	p = push
+	s = status
+	cl = clone
+	unstage = reset HEAD --
+	first = !git add . && git commit -m \"initial commit\"
+[diff]
+	tool = vimdiff
+[user]
+	name = "Louis Thompson"
+	email = "erszk.coding@gmail.com"
