@@ -28,9 +28,10 @@ fi
 # fi
 
 #### core user variables
-export EDITOR="nano"
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"
 export PAGER="less"
-export VISUAL="$EDITOR"
+export VISUAL="emacsclient -c"
 
 #### locale
 export LC_ALL="C"		# ASCII
@@ -65,3 +66,6 @@ fi
 #### source other startup files
 [ -r ~/.env ] && . ~/.env
 [ -r ~/.bashrc ] && . ~/.bashrc
+if [ -f /usr/local/share/bash-completion/bash_completion ]; then
+    . /usr/local/share/bash-completion/bash_completion
+fi

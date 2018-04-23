@@ -25,10 +25,6 @@ dl="$HOME/Downloads"
 doc="$HOME/Documents"
 m="$HOME/Music"
 
-#### completion
-# complete -cf -o bashdefault which sudo xargs nice
-# complete -cf man
-
 #### General
 # ls
 alias l="ls -F"
@@ -37,7 +33,7 @@ alias ll="l -lh"
 alias lla="ll -A"
 alias lr="l -R"
 alias lra="lr -A"
-# dir stack manipulation
+# dir stack manipulation (inspired by Forth)
 function swap() { pushd "$@" >/dev/null; }
 function drop() { popd "$@" >/dev/null; }
 function pick() { eval "swap $(dirs "$1")"; }
@@ -45,13 +41,14 @@ function roll() {
     local i="$1"
     pick "$i" && let 'i++' && drop +"$i"
 }
-alias p="pushd" dup="swap ." d="dirs -v"
+alias p="pushd"
+alias d="dirs -v"
 alias over="pick +1"
 alias nip="drop +1"
 alias tuck="swap && over"
 alias rot="roll +2"
 alias tor="swap && swap +1 && swap && swap -0"
-alias 2drop="drop && drop"
+alias 2drop="drop && drop" # ndrop function?
 # alias 2dup="over && over"
 # alias 2nip="drop +2 && drop +2"
 # alias 2over="pick +3 && pick +3"
@@ -59,9 +56,9 @@ alias 2drop="drop && drop"
 # alias 2rot="roll +5 && roll +5"
 
 #### EDITING
-alias bsr="$EDITOR ~/.bashrc && . ~/.bashrc"
-alias bsp="$EDITOR ~/.bash_profile"
-alias ec="emacsclient -n"
+alias e="emacsclient -n -c"
+alias ec="emacsclient -c"
+alias et="emacsclient -t"
 
 #### PERL
 # alias newpm="h2xs -AX --skip-exporter --use-new-tests -n"
@@ -74,14 +71,13 @@ alias inip='ipconfig getifaddr en0'
 #### OTHER
 alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias g="git"
-alias gitit="git init && git add . && git commit -m 'initial commit' && reposetup"
 alias h="history"
 alias ihr="du -hcd0"
 alias j="jobs"
 alias n="nnn -lc6"
 alias rlwrap="rlwrap -np red -H /dev/null"
+alias scat='source-highlight -f esc -o /dev/stdout -i'
 alias serve="python3 -m http.server 8000"
-alias scat="pygmentize"
 alias top="top -o cpu"
 #### SILLY
 alias wheniseaster="ncal -e"
@@ -163,7 +159,6 @@ function o() {
 
 # coordinates of mouse cursor
 alias maus="cliclick p | cut -c 25-"
-alias nuke="history -c; hash -r; cliclick kd:cmd t:k ku:cmd"
 # RGB color value of pixel at cursor point
 function rgb() { cliclick "cp:$(maus)"; }
 #### END MacOS
