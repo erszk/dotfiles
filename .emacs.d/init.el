@@ -187,6 +187,14 @@ GFM Markdown table"
 ;;; HOOKS
 ;; (add-hook 'text-mode-hook #'my/setup-text-mode)
 ;; (add-hook 'tex-mode-hook #'my/setup-tex-mode)
+
+;;; LSUIElement plist hack fix for MacOS daemon
+(add-hook
+ 'focus-in-hook
+ '(lambda ()
+    (shell-command
+     "issw com.apple.keylayout.USExtended" nil)))
+
 (add-hook 'sh-mode-hook #'my/setup-sh-mode)
 ;; (add-hook 'before-save-hook #'whitespace-cleanup)
 
@@ -221,6 +229,9 @@ GFM Markdown table"
 ;;; MODES
 (global-hl-line-mode t)			; highlight the line the cursor is on
 (global-linum-mode 1)			; line numbering everywhere
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 ;;; MODE LINE
 ;; (size-indication-mode)
 ;;; Perl - use the superior built-in cperl-mode
@@ -286,31 +297,20 @@ GFM Markdown table"
   (bind-keys :map view-mode-map
 	     ("b" . View-scroll-page-backward)))
 
-;; (NON-)GUI SPECIFIC CONFIGURATION
-(cond ((display-graphic-p) ; see also C-h v window-system
-       (toggle-frame-fullscreen) ; fullscreen by default
-       (tool-bar-mode -1)
-       (scroll-bar-mode -1)
-       ;; mirrors some system shortcuts
-       (global-set-key (kbd "s-f") 'toggle-frame-fullscreen)
-       (global-set-key (kbd "s-<up>") 'beginning-of-buffer)
-       (global-set-key (kbd "s-<down>") 'end-of-buffer)
+;; mirrors some system shortcuts
+(global-set-key (kbd "s-f") 'toggle-frame-fullscreen)
+(global-set-key (kbd "s-<up>") 'beginning-of-buffer)
+(global-set-key (kbd "s-<down>") 'end-of-buffer)
 
-       ;; OS-specific configuration
-       (cond ((eq system-type 'darwin)
-	      ;; allows for easier C-M chords
-	      (setq ns-command-modifier 'control
-		    ns-function-modifier 'hyper
-		    ns-control-modifier 'super))))
+;; OS-specific configuration
+(cond ((eq system-type 'darwin)
+       ;; (toggle-frame-fullscreen)	; fullscreen by default
+       ;; allows for easier C-M chords
+       (setq ns-command-modifier 'control
+	     ns-function-modifier 'hyper
+	     ns-control-modifier 'super)))
 
-      ;; terminal Emacs only
-      (t
-       ;; so company and flymake don't step on each other's toes
-       (setq flycheck-indication-mode nil)
-       (menu-bar-mode -1)))
-
-;;; SERVER
-(server-start)
+;; (setq flycheck-indication-mode nil)
 
 ;;; ENABLED COMMANDS
 (put 'narrow-to-page 'disabled nil)
