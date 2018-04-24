@@ -1,0 +1,32 @@
+library: ~/gdrive/beets.db
+directory: ~/Music/beets
+
+original_date: yes
+asciify_paths: yes
+
+import:
+  move: yes
+  resume: ask
+  languages: en de
+  duplicate_action: ask
+
+paths:
+  default: %the{$albumartist}/$album%aunique{}/${track}_${title}
+
+replace:
+  '’': "'"
+  '[\\/]': _
+  '^\.': _
+  '[\x00-\x1f]': _
+  '[<>:"\?\*\|]': _
+  '\.$': _
+  '\s+$': ''
+  '^\s+': ''
+
+plugins: fetchart the missing duplicates play edit ftintitle
+
+fetchart:
+    auto: no
+
+play:
+  command: mpv

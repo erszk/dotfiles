@@ -1,0 +1,95 @@
+# global gitignore file
+
+#### COMMON LISP
+*.FASL
+*.fasl
+*.lisp-temp
+
+#### GOLANG
+*.a
+*.so
+_obj
+_test
+*.[568vq]
+*.cgo[12].*
+_cgo*
+_testmain.go
+*.test
+*.prof
+
+#### C++
+*.o
+*.app
+*.exe
+*.lib
+*.obj
+*.out
+*.dylib
+
+#### JAVA
+*.ear
+*.jar
+*.war
+*.class
+
+#### PERL
+/.build/
+_build/
+cover_db/
+inc/
+Build
+!Build/
+.last_cover_stats
+/META.yml
+/META.json
+/MYMETA.*
+*.bs
+
+#### PYTHON
+.cache
+.Python
+*.py[cod]
+*.pickle
+*.manifest
+*.spec
+env/
+var/
+dist/
+eggs/
+.eggs/
+build/
+target/
+*.egg-info/
+__pycache__/
+
+#### LATEX
+# aux/build files
+*.aux
+*.fls
+*.toc
+# Latexmk
+*.synctex*
+*.fdb_latexmk
+# Output
+*.dvi
+*.pdf
+# bib aux files
+*.bbl
+*.blg
+*.run.xml
+# beamer
+*.nav
+*.snm
+*.vrb
+
+#### MISC
+# emacs
+.\#*
+[#]*[#]
+*~
+
+*.log
+*.old
+*.bak
+.DS_Store
+*.env
