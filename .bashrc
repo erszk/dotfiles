@@ -55,11 +55,6 @@ alias 2drop="drop && drop" # ndrop function?
 # alias 2swap="2over && drop +4 && drop +4"
 # alias 2rot="roll +5 && roll +5"
 
-#### EDITING
-alias e="emacsclient -n -c"
-alias ec="emacsclient -c"
-alias et="emacsclient -t"
-
 #### PERL
 # alias newpm="h2xs -AX --skip-exporter --use-new-tests -n"
 alias pd="perldoc"
@@ -79,6 +74,7 @@ alias rlwrap="rlwrap -np red -H /dev/null"
 alias scat='source-highlight -f esc -o /dev/stdout -i'
 alias serve="python3 -m http.server 8000"
 alias top="top -o cpu"
+alias x='chmod u+x'
 #### SILLY
 alias wheniseaster="ncal -e"
 
@@ -93,7 +89,7 @@ function woke() {
     else
 	pid="$(pgrep -in "$1")"
     fi
-    caffeinate -disuw "$pid" &
+    caffeinate -disuw "$pid"
 }
 function pstat() { echo "${PIPESTATUS[@]}"; }
 # quickly add a *permanent* alias
@@ -101,7 +97,12 @@ function pals() {
     eval "$(printf 'alias %s="%s"' "$1" "$2")"
     alias "$1" >> ~/.bashrc
 }
-
+function pdfcat() {
+    # use last arg as outfile and rest as inputs
+    local out="${!#}"
+    gs -q -sPAPERSIZE=a4 -dNOPAUSE -dBATCH \
+       -sDEVICE=pdfwrite -sOutputFile="$out" "${@:1:$(($#-1))}"
+}
 # quickly traverse up directories
 function u() {
     local i
@@ -127,6 +128,7 @@ function rs() {
 alias bccl="brew cask cleanup"
 alias bch="brew cask home"
 alias bci="brew cask info"
+alias bcs="brew cask search"
 alias brau="brew update && brew upgrade && brcl"
 alias brcl="brew cleanup -s && brew prune"
 alias brdp="brew deps --tree --installed"

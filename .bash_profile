@@ -28,10 +28,9 @@ fi
 # fi
 
 #### core user variables
-export ALTERNATE_EDITOR=""
-export EDITOR="emacsclient -t"
+export EDITOR="e -t"
 export PAGER="less"
-export VISUAL="emacsclient -c"
+export VISUAL="e -w"
 
 #### locale
 export LC_ALL="C"		# ASCII
