@@ -79,11 +79,12 @@
 
 (use-package markdown-mode
   ;; autoload on markdown, default to GFM
-  ;; :commands (markdown-mode gfm-mode)
-  :mode ("\\.md\\'" . gfm-mode)
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\'" . gfm-mode)
+	 ("\\.md\\'" . markdown-mode))
   :bind (:map gfm-mode
-	      ("C-c C-x x" . my/table-gfm-export)
-	      ("C-c C-x c" . my/table-gfm-capture)))
+  	      ("C-c C-x x" . my/table-gfm-export)
+  	      ("C-c C-x c" . my/table-gfm-capture)))
 
 ;; improve on M-x package-list
 (use-package paradox
@@ -91,7 +92,6 @@
   :bind ("C-c p" . paradox-list-packages))
 
 ;; this is needed for LISP
-;; TODO: add improved transpose-char
 (use-package paredit
   :commands enable-paredit-mode
   :init
@@ -151,9 +151,6 @@
 
 ;;; MISC.
 ;;; FUNCTIONS/MACROS
-;; (defun in-path-p (executable)
-;;   (< 0 (length (shell-command-to-string
-;;		(concat "which " executable)))))
 
 (defun my/table-gfm-capture (start end)
   "convert Markdown table to Emacs table
@@ -183,17 +180,15 @@ GFM Markdown table"
 (defun my/setup-sh-mode ()
   (sh-set-shell "bash"))
 
-
 ;;; HOOKS
 ;; (add-hook 'text-mode-hook #'my/setup-text-mode)
 ;; (add-hook 'tex-mode-hook #'my/setup-tex-mode)
-
 ;;; LSUIElement plist hack fix for MacOS daemon
 (add-hook
  'focus-in-hook
  '(lambda ()
-    (shell-command
-     "issw com.apple.keylayout.USExtended" nil)))
+    (call-process-shell-command
+     "issw com.apple.keylayout.USExtended" nil 0)))
 
 (add-hook 'sh-mode-hook #'my/setup-sh-mode)
 ;; (add-hook 'before-save-hook #'whitespace-cleanup)
@@ -304,14 +299,20 @@ GFM Markdown table"
 
 ;; OS-specific configuration
 (cond ((eq system-type 'darwin)
+       
        ;; (toggle-frame-fullscreen)	; fullscreen by default
-       ;; allows for easier C-M chords
        (setq ns-command-modifier 'control
 	     ns-function-modifier 'hyper
 	     ns-control-modifier 'super)))
 
 ;; (setq flycheck-indication-mode nil)
 
+;; For GhostText browser extension
+(atomic-chrome-start-server)
+;; (setq atomic-chrome-url-major-mode-alist
+;;       '(("github\\.com" . gfm-mode)
+;;         ("old\\.reddit\\.com" . markdown-mode)))
+
 ;;; ENABLED COMMANDS
 (put 'narrow-to-page 'disabled nil)
 (put 'set-goal-column 'disabled nil)

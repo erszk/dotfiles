@@ -23,14 +23,15 @@ fi
 [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
 
 #### Perl - bootstrap @INC
-# if [ -d "$HOME/pkg/perl5" ]; then
-#     eval "$(perl -I "$HOME/pkg/perl5/lib/perl5" -Mlocal::lib="$HOME/pkg/perl5")"
-# fi
+if [ -d "$HOME/pkg/perl5" ]; then
+    eval "$(perl -I "$HOME/pkg/perl5/lib/perl5" -Mlocal::lib="$HOME/pkg/perl5")"
+fi
 
 #### core user variables
-export EDITOR="e -t"
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"
 export PAGER="less"
-export VISUAL="e -w"
+export VISUAL="emacsclient -c"
 
 #### locale
 export LC_ALL="C"		# ASCII
