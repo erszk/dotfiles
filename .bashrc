@@ -2,7 +2,7 @@
 #### Shell options, history settings, etc.
 unset HISTFILE
 set -o noclobber		# use >| to overwrite files
-shopt -s cdable_vars
+# shopt -s cdable_vars
 shopt -s cdspell
 shopt -s checkhash
 shopt -s histreedit
@@ -18,12 +18,8 @@ if [ "$BASH_VERSINFO" -eq 4 ]; then
     shopt -s globstar
 fi
 
-#### cdable_vars
-c="$HOME/code"
-d="$HOME/Desktop"
-dl="$HOME/Downloads"
-doc="$HOME/Documents"
-m="$HOME/Music"
+CDPATH=".:~:.."
+complete -d p
 
 #### General
 # ls
@@ -64,11 +60,14 @@ alias exip='dig +short myip.opendns.com @resolver1.opendns.com'
 alias inip='ipconfig getifaddr en0'
 
 #### OTHER
+alias dc='rlwrap dc'
 alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
+alias ed='rlwrap ed -p "ed> "'
 alias g="git"
 alias h="history"
 alias ihr="du -hcd0"
 alias j="jobs"
+alias mptest='mpv --input-test --force-window --idle'
 alias n="nnn -lc6"
 alias rlwrap="rlwrap -np red -H /dev/null"
 alias scat='source-highlight -f esc -o /dev/stdout -i'
@@ -95,7 +94,7 @@ function pstat() { echo "${PIPESTATUS[@]}"; }
 # quickly add a *permanent* alias
 function pals() {
     eval "$(printf 'alias %s="%s"' "$1" "$2")"
-    alias "$1" >> ~/.bashrc
+    alias "$1" | tee -a ~/.bashrc
 }
 function pdfcat() {
     # use last arg as outfile and rest as inputs
@@ -107,6 +106,9 @@ function pdfcat() {
 function u() {
     local i
     for (( i=0; i<${1:-1}; i++ )); do
+	if [ "$PWD" == "/" ]; then
+	    break
+	fi
 	cd ../
     done
 }
@@ -142,6 +144,7 @@ alias ffx="/Applications/Firefox.app/Contents/MacOS/firefox-bin"
 # alias hs="o '/usr/local/Cellar/hyperspec/7.0/share/doc/hyperspec/HyperSpec/Front/index.htm'"
 # function lprun() { perl -e "$(pbpaste | perl -pe 'tr/\015/\n/' | vipe)"; }
 alias pbcl="echo '' | pbcopy"
+alias pbed='pbpaste | vipe | pbcopy'
 alias shuf="perl -MList::Util -e 'print List::Util::shuffle <>;'"
 alias t="trash"
 alias tac="tail -r"
@@ -166,3 +169,20 @@ function rgb() { cliclick "cp:$(maus)"; }
 #### END MacOS
 
 #### Temps
+function hh() { 
+    local cmd="$(history | fzf --tac +s | awk -vORS=\; '{$1=""; print substr($0,2);}')"
+    [ -n "$cmd" ] && eval "$cmd"
+}
+
+function fk() {
+    ps -axo pid,%cpu,command \
+	| fzf --header-lines=1 -m \
+	| awk '{print $1}' | xargs kill -"${1:-9}"
+}
+
+function fd() { 
+    local dir="$(find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2>/dev/null | fzf)"
+    [ -n "$dir" ] && cd "$dir"
+}
+
+# modify pals, add pfunc, funced?
