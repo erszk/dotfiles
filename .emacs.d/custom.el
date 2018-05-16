@@ -21,7 +21,7 @@
  '(indicate-buffer-boundaries (quote left))
  '(package-selected-packages
    (quote
-    (lua-mode fish-mode fountain-mode haskell-mode abc-mode apples-mode yaml-mode csv-mode yasnippet aggressive-indent ace-link company auctex-latexmk agressive-indent markdown-mode auctex expand-region which-key paradox use-package typit magit paredit slime)))
+    (atomic-chrome lua-mode fish-mode fountain-mode haskell-mode abc-mode apples-mode yaml-mode csv-mode yasnippet aggressive-indent ace-link company auctex-latexmk agressive-indent markdown-mode auctex expand-region which-key paradox use-package typit magit paredit slime)))
  '(paradox-github-token t))
 
 (custom-set-faces

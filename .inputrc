@@ -19,7 +19,6 @@ set completion-map-case on
 # cycle through completions instead of typing them out
 $if mode=emacs
 "\C-j": menu-complete
-# $else
 $endif
 ####
 
