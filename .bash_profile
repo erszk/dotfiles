@@ -34,7 +34,8 @@ export PAGER="less"
 export VISUAL="emacsclient -c"
 
 #### locale
-export LC_ALL="C"		# ASCII
+export LANG="de_DE.UTF-8"
+export LC_ALL="$LANG"
 
 #### misc
 export LESS="-iR" 		# smart case-insensitivity
@@ -66,6 +67,7 @@ fi
 #### source other startup files
 [ -r ~/.env ] && . ~/.env
 [ -r ~/.bashrc ] && . ~/.bashrc
+# completion
 if [ -f /usr/local/share/bash-completion/bash_completion ]; then
     . /usr/local/share/bash-completion/bash_completion
 fi

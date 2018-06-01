@@ -19,7 +19,6 @@ if [ "$BASH_VERSINFO" -eq 4 ]; then
 fi
 
 CDPATH=".:~:.."
-complete -d p
 
 #### General
 # ls
@@ -63,7 +62,6 @@ alias inip='ipconfig getifaddr en0'
 alias dc='rlwrap dc'
 alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias ed='rlwrap ed -p "ed> "'
-alias g="git"
 alias h="history"
 alias ihr="du -hcd0"
 alias j="jobs"
@@ -92,10 +90,7 @@ function woke() {
 }
 function pstat() { echo "${PIPESTATUS[@]}"; }
 # quickly add a *permanent* alias
-function pals() {
-    eval "$(printf 'alias %s="%s"' "$1" "$2")"
-    alias "$1" | tee -a ~/.bashrc
-}
+function pals() { alias "$1" | tee -a ~/.bashrc; }
 function pdfcat() {
     # use last arg as outfile and rest as inputs
     local out="${!#}"
@@ -104,13 +99,19 @@ function pdfcat() {
 }
 # quickly traverse up directories
 function u() {
-    local i
-    for (( i=0; i<${1:-1}; i++ )); do
+    local -i i=0 bound="${1:-1}"
+    if [ "$bound" -eq 0 ]; then
+	let 'bound++'
+    fi
+
+    local opwd="$PWD"
+    for ((i; i<bound; i++)); do
+	cd ../
 	if [ "$PWD" == "/" ]; then
 	    break
 	fi
-	cd ../
     done
+    OLDPWD="$opwd"
 }
 
 # resize terminal; escape \rs to use rs(1)
@@ -119,11 +120,6 @@ function rs() {
     local lines="${2:-24}"
     printf "\e[8;%d;%dt" "$lines" "$cols"
 }
-
-#### SOURCE EXTRAS
-# [ -d ~/code/sourced ] && . ~/code/sourced/*
-[ -d /usr/local/etc/bash_completion.d ] \
-    && . /usr/local/etc/bash_completion.d/*
 
 #### BEGIN MacOS
 ## BREW RELATED
@@ -163,13 +159,13 @@ function o() {
 }
 
 # coordinates of mouse cursor
-alias maus="cliclick p | cut -c 25-"
+alias maus="cliclick p"
 # RGB color value of pixel at cursor point
 function rgb() { cliclick "cp:$(maus)"; }
 #### END MacOS
 
 #### Temps
-function hh() { 
+function hh() {
     local cmd="$(history | fzf --tac +s | awk -vORS=\; '{$1=""; print substr($0,2);}')"
     [ -n "$cmd" ] && eval "$cmd"
 }
@@ -180,9 +176,9 @@ function fk() {
 	| awk '{print $1}' | xargs kill -"${1:-9}"
 }
 
-function fd() { 
-    local dir="$(find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2>/dev/null | fzf)"
-    [ -n "$dir" ] && cd "$dir"
+function pfunc() { declare -f "$1" | tee -a ~/.bashrc; }
+function funced() { eval "$(declare -f "$1" | vipe)"; }
+function pvar() {
+    # detect different files?
+    declare -p "$1" | tee -a ~/.bashrc
 }
-
-# modify pals, add pfunc, funced?
