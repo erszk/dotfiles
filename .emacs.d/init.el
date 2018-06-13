@@ -57,11 +57,11 @@
   :bind ("C-=" . er/expand-region))
 
 ;; autodetect syntax errors
-(use-package flymake
-  :init
-  ;; smartly activate Flymode for syn-check
-  (add-hook 'find-file-hook #'flymake-find-file-hook)
-  :bind ("C-c n" . flymake-goto-next-error))
+;; (use-package flymake
+;;   :init
+;;   ;; smartly activate Flymode for syn-check
+;;   (add-hook 'find-file-hook #'flymake-find-file-hook)
+;;   :bind ("C-c n" . flymake-goto-next-error))
 
 (use-package fountain-mode
   :mode "\\.ftn\\'")
@@ -83,8 +83,8 @@
   :mode (("README\\.md\'" . gfm-mode)
 	 ("\\.md\\'" . markdown-mode))
   :bind (:map gfm-mode
-  	      ("C-c C-x x" . my/table-gfm-export)
-  	      ("C-c C-x c" . my/table-gfm-capture)))
+	      ("C-c C-x x" . my/table-gfm-export)
+	      ("C-c C-x c" . my/table-gfm-capture)))
 
 ;; improve on M-x package-list
 (use-package paradox
@@ -115,8 +115,8 @@
   (add-hook 'slime-repl-mode-hook #'enable-paredit-mode)
   ;; (add-hook 'kill-emacs-hook #'my/slime-smart-quit)
   (setq inferior-lisp-program "/usr/local/bin/sbcl --noinform"
- 	slime-contribs '(slime-fancy))
-  :config 
+	slime-contribs '(slime-fancy))
+  :config
   (setq common-lisp-hyperspec-root "/usr/local/share/doc/hyperspec/HyperSpec/"
 	common-lisp-hyperspec-symbol-table
 	(concat common-lisp-hyperspec-root "Data/Map_Sym.txt")
@@ -131,7 +131,7 @@
 ;;   :diminish yas-minor-mode
 ;;   :config
 ;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets"
-;; 			   "~/.emacs.d/elpa/yasnippet-0.11.0/snippets"))
+;;			   "~/.emacs.d/elpa/yasnippet-0.11.0/snippets"))
 ;;   (yas-global-mode 1))
 
 ;; ;; requires AUCTeX
@@ -141,8 +141,8 @@
 ;;     ;; to allow for multi-file projects
 ;;     ;; this boilerplate taken from Emacswiki
 ;;     (setq TeX-auto-save t
-;; 	  TeX-parse-self t
-;; 	  TeX-PDF-mode t)
+;;	  TeX-parse-self t
+;;	  TeX-PDF-mode t)
 ;;     (setq-default TeX-master nil)
 ;;     ;; use latexmk for compiling
 ;;     (use-package auctex-latexmk
@@ -169,8 +169,9 @@ GFM Markdown table"
   (table-unrecognize))
 
 (defun my/setup-text-mode ()
+  (toggle-word-wrap)
   (turn-on-auto-fill)
-  (flyspell-mode)
+  ;; (flyspell-mode)
   (add-hook 'before-save-hook #'ispell-buffer nil t))
 
 (defun my/setup-tex-mode ()
@@ -180,9 +181,15 @@ GFM Markdown table"
 (defun my/setup-sh-mode ()
   (sh-set-shell "bash"))
 
+(defun my/setup-prog-mode ()
+  (if (not (string= "Emacs-Lisp" mode-name))
+      (setq page-delimiter
+	    (concat "^" comment-start " "))))
+
 ;;; HOOKS
-;; (add-hook 'text-mode-hook #'my/setup-text-mode)
-;; (add-hook 'tex-mode-hook #'my/setup-tex-mode)
+(add-hook 'prog-mode-hook #'my/setup-prog-mode)
+(add-hook 'text-mode-hook #'my/setup-text-mode)
+(add-hook 'tex-mode-hook #'my/setup-tex-mode)
 ;;; LSUIElement plist hack fix for MacOS daemon
 (add-hook
  'focus-in-hook
@@ -191,9 +198,9 @@ GFM Markdown table"
      "issw com.apple.keylayout.USExtended" nil 0)))
 
 (add-hook 'sh-mode-hook #'my/setup-sh-mode)
-;; (add-hook 'before-save-hook #'whitespace-cleanup)
+(add-hook 'before-save-hook #'whitespace-cleanup)
 
-
+
 ;;; VARIABLES
 (setq inhibit-startup-message t		; no splash screen
       initial-scratch-message nil
@@ -243,7 +250,10 @@ GFM Markdown table"
  ;; extras
  ("M-g M-j" . next-logical-line)
  ("M-g M-k" . previous-logical-line)
+ ("M-g e" . end-of-line)
  ;; shadow defaults
+ ("C-e" . end-of-visual-line)
+ ("M-z" . zap-up-to-char)
  ("C-x C-b" . buffer-menu-other-window)
  ;; hyper
  ("H-v" . add-file-local-variable-prop-line)
@@ -299,7 +309,7 @@ GFM Markdown table"
 
 ;; OS-specific configuration
 (cond ((eq system-type 'darwin)
-       
+
        ;; (toggle-frame-fullscreen)	; fullscreen by default
        (setq ns-command-modifier 'control
 	     ns-function-modifier 'hyper
