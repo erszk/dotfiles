@@ -21,6 +21,8 @@ if command -v go && [ -d "$HOME/code/go" ]; then
     PATH="$GOPATH/bin:$PATH"
 fi
 [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
+test -d /usr/local/opt/gnu-getopt/bin \
+    && PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
 #### Perl - bootstrap @INC
 if [ -d "$HOME/pkg/perl5" ]; then
@@ -36,11 +38,16 @@ export VISUAL="emacsclient -c"
 #### locale
 export LANG="de_DE.UTF-8"
 export LC_ALL="$LANG"
+export LC_COLLATE="C" LC_CTYPE="C"
 
 #### misc
-export LESS="-iR" 		# smart case-insensitivity
+export LESS="-iR"		# smart case
 export LESSHISTFILE="/dev/null"
 export GREP_OPTIONS="--color=auto"
+export FZF_DEFAULT_OPTS="--border --inline-info --exact --multi
+--bind ctrl-j:page-down,ctrl-k:page-up,alt-j:jump-accept
+--bind ctrl-i:select-all,ctrl-o:deselect-all,ctrl-t:top
+--filepath-word --tiebreak=length,end,begin"
 
 #### BEGIN MacOS
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
