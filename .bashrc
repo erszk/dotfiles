@@ -5,10 +5,11 @@ set -o noclobber		# use >| to overwrite files
 # shopt -s cdable_vars
 shopt -s cdspell
 shopt -s checkhash
+shopt -s failglob
 shopt -s histreedit
 shopt -s lithist
+shopt -s nocaseglob
 shopt -s no_empty_cmd_completion
-shopt -s nullglob
 shopt -s shift_verbose
 
 if [ "$BASH_VERSINFO" -eq 4 ]; then
@@ -19,7 +20,6 @@ if [ "$BASH_VERSINFO" -eq 4 ]; then
 fi
 
 CDPATH=".:~:.."
-
 #### General
 # ls
 alias l="ls -F"
@@ -31,24 +31,26 @@ alias lra="lr -A"
 # dir stack manipulation (inspired by Forth)
 function swap() { pushd "$@" >/dev/null; }
 function drop() { popd "$@" >/dev/null; }
-function pick() { eval "swap $(dirs "$1")"; }
+function pick() { swap "${DIRSTACK[$1]}"; }
 function roll() {
-    local i="$1"
-    pick "$i" && let 'i++' && drop +"$i"
+    local -i i="$1"
+    pick "$i" && let 'i++' && drop "+${i}"
 }
 alias p="pushd"
 alias d="dirs -v"
-alias over="pick +1"
-alias nip="drop +1"
+alias over="pick 1 && dirs"
+alias nip="drop +1 && dirs"
 alias tuck="swap && over"
-alias rot="roll +2"
-alias tor="swap && swap +1 && swap && swap -0"
-alias 2drop="drop && drop" # ndrop function?
-# alias 2dup="over && over"
-# alias 2nip="drop +2 && drop +2"
-# alias 2over="pick +3 && pick +3"
-# alias 2swap="2over && drop +4 && drop +4"
-# alias 2rot="roll +5 && roll +5"
+alias rot="roll 2 && dirs"
+alias tor="swap && swap +1 && swap && swap -0 && dirs"
+function ndrop() {
+    local -i i
+    for ((i=0; i<${1:-1}; i++)); do
+	drop
+	test "$?" -ne 0 && break
+    done
+    dirs
+}
 
 #### PERL
 # alias newpm="h2xs -AX --skip-exporter --use-new-tests -n"
@@ -62,26 +64,26 @@ alias inip='ipconfig getifaddr en0'
 alias dc='rlwrap dc'
 alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias ed='rlwrap ed -p "ed> "'
-alias h="history"
-alias ihr="du -hcd0"
-alias j="jobs"
+alias h='history'
+alias ihr='du -hcd0'
+alias j='jobs'
 alias mptest='mpv --input-test --force-window --idle'
-alias n="nnn -lc6"
-alias rlwrap="rlwrap -np red -H /dev/null"
+alias n='nnn -lc6'
+alias rlwrap='rlwrap -np red -H /dev/null'
 alias scat='source-highlight -f esc -o /dev/stdout -i'
-alias serve="python3 -m http.server 8000"
-alias top="top -o cpu"
+alias serve='python3 -m http.server 8000'
+alias top='top -o cpu'
 alias x='chmod u+x'
 #### SILLY
-alias wheniseaster="ncal -e"
+alias wheniseaster='ncal -e'
 
 #### FUNCTIONS
 # crude dictionary search
-# function dct() { grep -Ei "$*\W" ~/Documents/wb.txt; }
+# function dct() { grep -Ei '$*\W' ~/Documents/wb.txt; }
 # prevent computer from falling asleep while bash/pid running
 function woke() {
     local pid
-    if [ "$#" -eq 0 ]; then
+    if (($# == 0)); then
 	pid="$$"
     else
 	pid="$(pgrep -in "$1")"
@@ -100,12 +102,12 @@ function pdfcat() {
 # quickly traverse up directories
 function u() {
     local -i i=0 bound="${1:-1}"
-    if [ "$bound" -eq 0 ]; then
+    if ((bound == 0)); then
 	let 'bound++'
     fi
 
     local opwd="$PWD"
-    for ((i; i<bound; i++)); do
+    for ((; i<bound; i++)); do
 	cd ../
 	if [ "$PWD" == "/" ]; then
 	    break
@@ -123,27 +125,27 @@ function rs() {
 
 #### BEGIN MacOS
 ## BREW RELATED
-alias bccl="brew cask cleanup"
-alias bch="brew cask home"
-alias bci="brew cask info"
-alias bcs="brew cask search"
-alias brau="brew update && brew upgrade && brcl"
-alias brcl="brew cleanup -s && brew prune"
-alias brdp="brew deps --tree --installed"
-alias brh="brew home"
-alias bri="brew info"
-alias brls="brew leaves"
-alias brs="brew search"
+alias bccl='brew cask cleanup'
+alias bch='brew cask home'
+alias bci='brew cask info'
+alias bcs='brew cask search'
+alias brau='brew update && brew upgrade && brcl'
+alias brcl='brew cleanup -s && brew prune'
+alias bd='brew deps --tree --installed'
+alias bh='brew home'
+alias bi='brew info'
+alias bls='brew leaves'
+alias bs='brew search'
 
-alias a="open -a"
-alias ffx="/Applications/Firefox.app/Contents/MacOS/firefox-bin"
-# alias hs="o '/usr/local/Cellar/hyperspec/7.0/share/doc/hyperspec/HyperSpec/Front/index.htm'"
+alias a='open -a'
+alias ffx='/Applications/Firefox.app/Contents/MacOS/firefox-bin'
+# alias hs='o '/usr/local/Cellar/hyperspec/7.0/share/doc/hyperspec/HyperSpec/Front/index.htm''
 # function lprun() { perl -e "$(pbpaste | perl -pe 'tr/\015/\n/' | vipe)"; }
-alias pbcl="echo '' | pbcopy"
+alias pbcl='echo | pbcopy'
 alias pbed='pbpaste | vipe | pbcopy'
-alias shuf="perl -MList::Util -e 'print List::Util::shuffle <>;'"
-alias t="trash"
-alias tac="tail -r"
+alias shuf='perl -MList::Util -e "print List::Util::shuffle <>;"'
+alias t='trash'
+alias tac='tail -r'
 
 # cd to directory open in *topmost* Finder window
 function cdf() {
@@ -151,7 +153,7 @@ function cdf() {
 }
 
 function o() {
-    if [ "$#" -eq 0 ]; then
+    if (($# == 0)); then
 	open ./
     else
 	open "$@"
@@ -159,26 +161,73 @@ function o() {
 }
 
 # coordinates of mouse cursor
-alias maus="cliclick p"
+alias maus='cliclick p'
 # RGB color value of pixel at cursor point
 function rgb() { cliclick "cp:$(maus)"; }
 #### END MacOS
 
 #### Temps
 function hh() {
-    local cmd="$(history | fzf --tac +s | awk -vORS=\; '{$1=""; print substr($0,2);}')"
-    [ -n "$cmd" ] && eval "$cmd"
+    eval "$(history | fzf --tac +s | awk '{$1=""; print substr($0,2);}')"
 }
 
 function fk() {
     ps -axo pid,%cpu,command \
-	| fzf --header-lines=1 -m \
-	| awk '{print $1}' | xargs kill -"${1:-9}"
+	| fzf --header-lines=1 --query="$1" \
+	| awk '{print $1}' | xargs kill -"${2:-9}"
 }
 
-function pfunc() { declare -f "$1" | tee -a ~/.bashrc; }
-function funced() { eval "$(declare -f "$1" | vipe)"; }
-function pvar() {
-    # detect different files?
-    declare -p "$1" | tee -a ~/.bashrc
+function save() {
+    while (($#)); do
+	case "$(type -t "$1")" in
+	    alias)
+		alias "$1" | tee -a .bashrc;;
+	    function)
+		declare -f "$1" | tee -a .bashrc;;
+	    *)
+		if declare -p "$1" >/dev/null; then
+		    declare -p "$1" | tee -a .bash_profile
+		else
+		    printf \
+			"\tnot a function/alias/variable: %s\n" \
+			"$1"
+		fi
+	esac
+	shift
+    done
 }
+complete -afv save
+
+function funced() { eval "$(declare -f "$1" | vipe)"; }
+function pp () {
+    while (($#)); do
+	case "$(type -t "$1")" in
+	    alias)
+		echo "${BASH_ALIASES[$1]}";;
+	    function)
+		declare -f "$1";;
+	    builtin|keyword)
+		help "$1";;
+	    file)
+		which "$1";;
+	    *)
+		declare -p "$1" 2>/dev/null
+	esac
+
+	if (("$#" > 1)); then
+	    printf "########################################\n"
+	fi
+	shift
+    done
+}
+complete -afbcv pp
+
+function album() {
+    find ~/Music/beets -depth 2 -type d -print0 \
+	| sort -rz \
+	| fzf --read0 --query="$*" \
+	      -d/ --with-nth=6.. --preview='ls -1 {}' \
+	| cut -d/ -f6- | mpc add && mpc play
+}
+alias kmax='emacsclient -e "(kill-emacs)"'
+alias ct='VISUAL=vim crontab'
