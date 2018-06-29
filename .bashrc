@@ -12,7 +12,7 @@ shopt -s nocaseglob
 shopt -s no_empty_cmd_completion
 shopt -s shift_verbose
 
-if [ "$BASH_VERSINFO" -eq 4 ]; then
+if (("$BASH_VERSINFO" == 4)); then
     shopt -s autocd
     shopt -s checkjobs
     shopt -s dirspell
@@ -36,7 +36,7 @@ function roll() {
     local -i i="$1"
     pick "$i" && let 'i++' && drop "+${i}"
 }
-alias p="pushd"
+alias p="pushd"; complete -o nospace -F _cd p
 alias d="dirs -v"
 alias over="pick 1 && dirs"
 alias nip="drop +1 && dirs"
@@ -44,10 +44,10 @@ alias tuck="swap && over"
 alias rot="roll 2 && dirs"
 alias tor="swap && swap +1 && swap && swap -0 && dirs"
 function ndrop() {
-    local -i i
-    for ((i=0; i<${1:-1}; i++)); do
+    local -i i=0 bound="${1:-1}"
+    for ((; i<bound; i++)); do
 	drop
-	test "$?" -ne 0 && break
+	(($?)) && break
     done
     dirs
 }
@@ -91,25 +91,15 @@ function woke() {
     caffeinate -disuw "$pid"
 }
 function pstat() { echo "${PIPESTATUS[@]}"; }
-# quickly add a *permanent* alias
-function pals() { alias "$1" | tee -a ~/.bashrc; }
-function pdfcat() {
-    # use last arg as outfile and rest as inputs
-    local out="${!#}"
-    gs -q -sPAPERSIZE=a4 -dNOPAUSE -dBATCH \
-       -sDEVICE=pdfwrite -sOutputFile="$out" "${@:1:$(($#-1))}"
-}
 # quickly traverse up directories
 function u() {
     local -i i=0 bound="${1:-1}"
-    if ((bound == 0)); then
-	let 'bound++'
-    fi
+    ((! bound && bound++))
 
     local opwd="$PWD"
     for ((; i<bound; i++)); do
 	cd ../
-	if [ "$PWD" == "/" ]; then
+	if [[ "$PWD" == / ]]; then
 	    break
 	fi
     done
@@ -118,8 +108,7 @@ function u() {
 
 # resize terminal; escape \rs to use rs(1)
 function rs() {
-    local cols="${1:-80}"
-    local lines="${2:-24}"
+    local cols="${1:-80}" lines="${2:-24}"
     printf "\e[8;%d;%dt" "$lines" "$cols"
 }
 
@@ -139,7 +128,7 @@ alias bs='brew search'
 
 alias a='open -a'
 alias ffx='/Applications/Firefox.app/Contents/MacOS/firefox-bin'
-# alias hs='o '/usr/local/Cellar/hyperspec/7.0/share/doc/hyperspec/HyperSpec/Front/index.htm''
+alias hs='o /usr/local/Cellar/hyperspec/7.0/share/doc/hyperspec/HyperSpec/Front/index.htm'
 # function lprun() { perl -e "$(pbpaste | perl -pe 'tr/\015/\n/' | vipe)"; }
 alias pbcl='echo | pbcopy'
 alias pbed='pbpaste | vipe | pbcopy'
@@ -153,7 +142,7 @@ function cdf() {
 }
 
 function o() {
-    if (($# == 0)); then
+    if ((! $#)); then
 	open ./
     else
 	open "$@"
@@ -189,8 +178,7 @@ function save() {
 		    declare -p "$1" | tee -a .bash_profile
 		else
 		    printf \
-			"\tnot a function/alias/variable: %s\n" \
-			"$1"
+			"\tnot a function/alias/variable: %s\n" "$1"
 		fi
 	esac
 	shift
@@ -209,7 +197,7 @@ function pp () {
 	    builtin|keyword)
 		help "$1";;
 	    file)
-		which "$1";;
+		file "$(type -p "$1")";;
 	    *)
 		declare -p "$1" 2>/dev/null
 	esac
