@@ -1,0 +1,18 @@
+# -*- mode: editorconfig-conf-mode; -*-
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = tab
+tab_width = 4
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.{cl,lisp,scm,el}]
+tab_width = 2
