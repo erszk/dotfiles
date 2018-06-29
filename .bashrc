@@ -13,10 +13,10 @@ shopt -s no_empty_cmd_completion
 shopt -s shift_verbose
 
 if (("$BASH_VERSINFO" == 4)); then
-    shopt -s autocd
-    shopt -s checkjobs
-    shopt -s dirspell
-    shopt -s globstar
+	shopt -s autocd
+	shopt -s checkjobs
+	shopt -s dirspell
+	shopt -s globstar
 fi
 
 CDPATH=".:~:.."
@@ -33,8 +33,8 @@ function swap() { pushd "$@" >/dev/null; }
 function drop() { popd "$@" >/dev/null; }
 function pick() { swap "${DIRSTACK[$1]}"; }
 function roll() {
-    local -i i="$1"
-    pick "$i" && let 'i++' && drop "+${i}"
+	local -i i="$1"
+	pick "$i" && let 'i++' && drop "+${i}"
 }
 alias p="pushd"; complete -o nospace -F _cd p
 alias d="dirs -v"
@@ -44,12 +44,12 @@ alias tuck="swap && over"
 alias rot="roll 2 && dirs"
 alias tor="swap && swap +1 && swap && swap -0 && dirs"
 function ndrop() {
-    local -i i=0 bound="${1:-1}"
-    for ((; i<bound; i++)); do
-	drop
-	(($?)) && break
-    done
-    dirs
+	local -i i=0 bound="${1:-1}"
+	for ((; i<bound; i++)); do
+		drop
+		(($?)) && break
+	done
+	dirs
 }
 
 #### PERL
@@ -60,19 +60,24 @@ alias pd="perldoc"
 alias exip='dig +short myip.opendns.com @resolver1.opendns.com'
 alias inip='ipconfig getifaddr en0'
 
-#### OTHER
+#### WRAPPERS
+alias rlwrap='rlwrap -np red -H /dev/null'
 alias dc='rlwrap dc'
-alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias ed='rlwrap ed -p "ed> "'
+alias sbcl='rlwrap sbcl --noinform'
+alias top='top -o cpu'
+
+#### OTHER
+alias ct='VISUAL=vim crontab'
+alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias h='history'
 alias ihr='du -hcd0'
 alias j='jobs'
+alias kmax='emacsclient -e "(kill-emacs)"'
 alias mptest='mpv --input-test --force-window --idle'
 alias n='nnn -lc6'
-alias rlwrap='rlwrap -np red -H /dev/null'
 alias scat='source-highlight -f esc -o /dev/stdout -i'
 alias serve='python3 -m http.server 8000'
-alias top='top -o cpu'
 alias x='chmod u+x'
 #### SILLY
 alias wheniseaster='ncal -e'
@@ -82,34 +87,34 @@ alias wheniseaster='ncal -e'
 # function dct() { grep -Ei '$*\W' ~/Documents/wb.txt; }
 # prevent computer from falling asleep while bash/pid running
 function woke() {
-    local pid
-    if (($# == 0)); then
-	pid="$$"
-    else
-	pid="$(pgrep -in "$1")"
-    fi
-    caffeinate -disuw "$pid"
+	local pid
+	if (($# == 0)); then
+		pid="$$"
+	else
+		pid="$(pgrep -in "$1")"
+	fi
+	caffeinate -disuw "$pid"
 }
 function pstat() { echo "${PIPESTATUS[@]}"; }
 # quickly traverse up directories
 function u() {
-    local -i i=0 bound="${1:-1}"
-    ((! bound && bound++))
+	local -i i=0 bound="${1:-1}"
+	((! bound && bound++))
 
-    local opwd="$PWD"
-    for ((; i<bound; i++)); do
-	cd ../
-	if [[ "$PWD" == / ]]; then
-	    break
-	fi
-    done
-    OLDPWD="$opwd"
+	local opwd="$PWD"
+	for ((; i<bound; i++)); do
+		cd ../
+		if [[ "$PWD" == / ]]; then
+			break
+		fi
+	done
+	OLDPWD="$opwd"
 }
 
 # resize terminal; escape \rs to use rs(1)
 function rs() {
-    local cols="${1:-80}" lines="${2:-24}"
-    printf "\e[8;%d;%dt" "$lines" "$cols"
+	local cols="${1:-80}" lines="${2:-24}"
+	printf "\e[8;%d;%dt" "$lines" "$cols"
 }
 
 #### BEGIN MacOS
@@ -128,7 +133,7 @@ alias bs='brew search'
 
 alias a='open -a'
 alias ffx='/Applications/Firefox.app/Contents/MacOS/firefox-bin'
-alias hs='o /usr/local/Cellar/hyperspec/7.0/share/doc/hyperspec/HyperSpec/Front/index.htm'
+alias hs='o /usr/local/opt/hyperspec/share/doc/hyperspec/HyperSpec/Front/index.htm'
 # function lprun() { perl -e "$(pbpaste | perl -pe 'tr/\015/\n/' | vipe)"; }
 alias pbcl='echo | pbcopy'
 alias pbed='pbpaste | vipe | pbcopy'
@@ -138,15 +143,18 @@ alias tac='tail -r'
 
 # cd to directory open in *topmost* Finder window
 function cdf() {
-    cd "$(osascript -e "tell application \"Finder\" to POSIX path of (target of window 1 as alias)")"
+	cd -- "$(osascript -e \
+		"tell application \"Finder\"
+			POSIX path of (target of window 1 as alias)
+		end tell")"
 }
 
 function o() {
-    if ((! $#)); then
-	open ./
-    else
-	open "$@"
-    fi
+	if ((! $#)); then
+		open ./
+	else
+		open "$@"
+	fi
 }
 
 # coordinates of mouse cursor
@@ -157,65 +165,62 @@ function rgb() { cliclick "cp:$(maus)"; }
 
 #### Temps
 function hh() {
-    eval "$(history | fzf --tac +s | awk '{$1=""; print substr($0,2);}')"
+	eval "$(history | fzf --tac +s \
+				| awk '{$1=""; print substr($0,2);}')"
 }
 
 function fk() {
-    ps -axo pid,%cpu,command \
-	| fzf --header-lines=1 --query="$1" \
-	| awk '{print $1}' | xargs kill -"${2:-9}"
+	ps -axo pid,%cpu,command \
+		| fzf --header-lines=1 --query="$1" \
+		| awk '{print $1}' | xargs kill -"${2:-9}"
 }
 
 function save() {
-    while (($#)); do
-	case "$(type -t "$1")" in
-	    alias)
-		alias "$1" | tee -a .bashrc;;
-	    function)
-		declare -f "$1" | tee -a .bashrc;;
-	    *)
-		if declare -p "$1" >/dev/null; then
-		    declare -p "$1" | tee -a .bash_profile
-		else
-		    printf \
-			"\tnot a function/alias/variable: %s\n" "$1"
-		fi
-	esac
-	shift
-    done
-}
-complete -afv save
+	while (($#)); do
+		case "$(type -t "$1")" in
+			alias)
+				alias "$1" | tee -a .bashrc;;
+			function)
+				declare -f "$1" | tee -a .bashrc;;
+			*)
+				if declare -p "$1" >/dev/null; then
+					declare -p "$1" | tee -a .bash_profile
+				else
+					printf \
+						"\tnot a function/alias/variable: %s\n" "$1"
+				fi
+		esac
+		shift
+	done
+}; complete -afv save
 
 function funced() { eval "$(declare -f "$1" | vipe)"; }
 function pp () {
-    while (($#)); do
-	case "$(type -t "$1")" in
-	    alias)
-		echo "${BASH_ALIASES[$1]}";;
-	    function)
-		declare -f "$1";;
-	    builtin|keyword)
-		help "$1";;
-	    file)
-		file "$(type -p "$1")";;
-	    *)
-		declare -p "$1" 2>/dev/null
-	esac
+	while (($#)); do
+		case "$(type -t "$1")" in
+			alias)
+				echo "${BASH_ALIASES[$1]}";;
+			function)
+				declare -f "$1";;
+			builtin|keyword)
+				help "$1";;
+			file)
+				file "$(type -p "$1")";;
+			*)
+				declare -p "$1" 2>/dev/null
+		esac
 
-	if (("$#" > 1)); then
-	    printf "########################################\n"
-	fi
+		if (("$#" > 1)); then
+			printf "########################################\n"
+fi
 	shift
-    done
-}
-complete -afbcv pp
+done
+}; complete -afbcv pp
 
 function album() {
-    find ~/Music/beets -depth 2 -type d -print0 \
-	| sort -rz \
-	| fzf --read0 --query="$*" \
-	      -d/ --with-nth=6.. --preview='ls -1 {}' \
-	| cut -d/ -f6- | mpc add && mpc play
+	find ~/Music/beets -depth 2 -type d -print0 \
+		| sort -rz \
+		| fzf --read0 --query="$*" \
+			  -d/ --with-nth=6.. --preview='ls -1 {}' \
+		| cut -d/ -f6- | mpc add && mpc play
 }
-alias kmax='emacsclient -e "(kill-emacs)"'
-alias ct='VISUAL=vim crontab'
