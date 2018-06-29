@@ -114,8 +114,10 @@
   :init
   (add-hook 'slime-repl-mode-hook #'enable-paredit-mode)
   ;; (add-hook 'kill-emacs-hook #'my/slime-smart-quit)
-  (setq inferior-lisp-program "/usr/local/bin/sbcl --noinform"
-	slime-contribs '(slime-fancy))
+  (setq
+   inferior-lisp-program "/usr/local/bin/sbcl --noinform"
+   ;; inferior-lisp-program "/usr/local/bin/clisp -q -I"
+   slime-contribs '(slime-fancy))
   :config
   (setq common-lisp-hyperspec-root "/usr/local/share/doc/hyperspec/HyperSpec/"
 	common-lisp-hyperspec-symbol-table

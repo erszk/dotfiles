@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
 #### prompts
 function prompt() {
-    local BOLD CYAN GREEN RED R
+    local BOLD CYAN GREEN RED R LAMBDA
     BOLD="\[$(tput bold)\]"
     CYAN="\[$(tput setaf 6)\]"
     GREEN="\[$(tput setaf 2)\]"
     RED="\[$(tput setaf 9)\]"
     R="\[$(tput sgr0)\]" # reset
-    echo "$GREEN\!$R $BOLD<\A>$R$CYAN\u$R@\h $RED\W$R\n>> "
+    printf -v LAMBDA "%s\u03bb%s" "$RED" "$R"
+    echo "$GREEN\!$R $BOLD<\A>$R$CYAN\u$R@\h $RED\W$R\n$LAMBDA "
 }
-export PS1 PS2
-PS1="$(prompt)"
-PS2="-> "
+export PS1="$(prompt)" PS2="-> "
 unset prompt
 
 #### the way, the truth and the light
 export PATH
-if command -v go && [ -d "$HOME/code/go" ]; then
+if command -v go >/dev/null && [ -d "$HOME/code/go" ]; then
     export GOPATH="$HOME/code/go"
     PATH="$GOPATH/bin:$PATH"
 fi
@@ -38,7 +37,7 @@ export VISUAL="emacsclient -c"
 #### locale
 export LANG="de_DE.UTF-8"
 export LC_ALL="$LANG"
-export LC_COLLATE="C" LC_CTYPE="C"
+# export LC_COLLATE="C" LC_CTYPE="C"
 
 #### misc
 export LESS="-iR"		# smart case
