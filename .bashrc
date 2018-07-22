@@ -123,7 +123,7 @@ alias bccl='brew cask cleanup'
 alias bch='brew cask home'
 alias bci='brew cask info'
 alias bcs='brew cask search'
-alias brau='brew update && brew upgrade && brcl'
+alias brau='brew update && brew upgrade --ignore-pinned && brcl'
 alias brcl='brew cleanup -s && brew prune'
 alias bd='brew deps --tree --installed'
 alias bh='brew home'
@@ -212,9 +212,9 @@ function pp () {
 
 		if (("$#" > 1)); then
 			printf "########################################\n"
-fi
-	shift
-done
+		fi
+		shift
+	done
 }; complete -afbcv pp
 
 function album() {
