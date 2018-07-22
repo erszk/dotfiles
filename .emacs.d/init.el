@@ -69,8 +69,18 @@
 ;;	 (add-hook 'find-file-hook #'flymake-find-file-hook)
 ;;	 :bind ("C-c n" . flymake-goto-next-error))
 
+;; (require 'forth-mode "gforth.el")
+(if nil
+	(use-package forth-mode
+		:mode "\\.fs\\'"
+		:load-path
+		"/usr/local/Cellar/gforth/0.7.3_1/share/emacs/site-lisp/gforth/"))
+
 (use-package fountain-mode
 	:mode "\\.ftn\\'")
+
+(use-package hy-mode
+	:mode "\\.hy\\'")
 
 ;; Helm is for posers
 (use-package ido
@@ -86,7 +96,7 @@
 (use-package markdown-mode
 	;; autoload on markdown, default to GFM
 	:commands (markdown-mode gfm-mode)
-	:mode (("README\\.md\'" . gfm-mode)
+	:mode (("README\\.md\\'" . gfm-mode)
 					("\\.md\\'" . markdown-mode))
 	:bind (:map gfm-mode
 					("C-c C-x x" . my/table-gfm-export)
@@ -101,12 +111,18 @@
 (use-package paredit
 	:commands enable-paredit-mode
 	:init
-	(add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-	(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-	(add-hook 'ielm-mode-hook #'enable-paredit-mode)
-	(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-	(add-hook 'lisp-mode-hook #'enable-paredit-mode)
-	(add-hook 'scheme-mode-hook #'enable-paredit-mode))
+	(let
+		((hooks
+			 '(hy-mode-hook emacs-lisp-mode-hook
+					eval-expression-minibuffer-setup-hook
+					ielm-mode-hook lisp-interaction-mode-hook
+					lisp-mode-hook scheme-mode-hook)))
+		(mapc #'(lambda (x) (add-hook x #'enable-paredit-mode))
+			hooks)
+		(add-hook 'paredit-mode-hook #'show-paren-mode)))
+
+(use-package powershell
+	:mode ("\\.ps[1m]\\'" . powershell-mode))
 
 ;; ;; for editing plain-text database files (see GNU recutils)
 ;; (use-package rec-mode
@@ -121,8 +137,11 @@
 	(add-hook 'slime-repl-mode-hook #'enable-paredit-mode)
 	;; (add-hook 'kill-emacs-hook #'my/slime-smart-quit)
 	(setq
-		inferior-lisp-program "/usr/local/bin/sbcl --noinform"
-		;; inferior-lisp-program "/usr/local/bin/clisp -q -I"
+		slime-net-coding-system 'utf-8-unix
+		slime-lisp-implementations
+		'((clisp ("/usr/local/bin/clisp" "-q" "-I"))
+			 (sbcl ("/usr/local/bin/sbcl" "--noinform"))
+			 (ccl ("/usr/local/bin/ccl64" "--quiet")))
 		slime-contribs '(slime-fancy))
 	:config
 	(setq
@@ -196,6 +215,9 @@ GFM Markdown table"
 		(setq page-delimiter
 			(concat "^" comment-start " "))))
 
+(add-to-list 'load-path "~/.emacs.d/pkg/gnu-apl-mode/")
+(require 'gnu-apl-mode)
+
 ;;; HOOKS
 (add-hook 'prog-mode-hook #'my/setup-prog-mode)
 (add-hook 'text-mode-hook #'my/setup-text-mode)
@@ -203,9 +225,9 @@ GFM Markdown table"
 ;;; LSUIElement plist hack fix for MacOS daemon
 (add-hook
 	'focus-in-hook
-	'(lambda ()
-		 (call-process-shell-command
-			 "issw com.apple.keylayout.USExtended" nil 0)))
+	#'(lambda ()
+			(call-process-shell-command
+				"issw com.apple.keylayout.USExtended" nil 0)))
 
 (add-hook 'sh-mode-hook #'my/setup-sh-mode)
 (add-hook 'before-save-hook #'whitespace-cleanup)
@@ -220,7 +242,7 @@ GFM Markdown table"
 	message-log-max 100
 	ring-bell-function 'ignore
 	view-read-only t)
-;;; EDIT
+;;; EDITING
 (setq fill-column 80			; for M-q and auto-fill-mode
 	require-final-newline t
 	sentence-end-double-space nil
@@ -230,13 +252,12 @@ GFM Markdown table"
 ;;; ERC - Emacs IRC client
 (setq erc-fill-function 'erc-fill-static
 	erc-fill-static-center 23)
-
+;;; MISC
+(setq scheme-program-name "csi")
 
 ;;; TABS
 ;; https://www.emacswiki.org/emacs/IndentationBasics
-(setq tab-width 4)
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
+(setq-default tab-width 4)
 
 ;;; MODES
 (global-hl-line-mode t)			; highlight the line the cursor is on
@@ -245,6 +266,7 @@ GFM Markdown table"
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 ;;; MODE LINE
+(column-number-mode)
 ;; (size-indication-mode)
 ;;; Perl - use the superior built-in cperl-mode
 ;;; from https://www.emacswiki.org/emacs/CPerlMode#toc1
@@ -305,8 +327,6 @@ GFM Markdown table"
 	("M" ibuffer-other-window "ibuffer" :color blue)
 	("SPC" nil "quit"))
 
-;;; - MODE-SPECIFIC
-(add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
 ;;; -- VIEW MODE
 (with-eval-after-load 'view
 	(bind-keys :map view-mode-map
@@ -318,12 +338,12 @@ GFM Markdown table"
 (global-set-key (kbd "s-<down>") 'end-of-buffer)
 
 ;; OS-specific configuration
-(cond ((eq system-type 'darwin)
-
-				;; (toggle-frame-fullscreen)
-				(setq ns-command-modifier 'control
-					ns-function-modifier 'hyper
-					ns-control-modifier 'super)))
+(case system-type
+	(darwin
+		;; (toggle-frame-fullscreen)
+		(setq ns-command-modifier 'control
+			ns-function-modifier 'hyper
+			ns-control-modifier 'super)))
 
 ;; (setq flycheck-indication-mode nil)
 
