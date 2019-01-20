@@ -79,6 +79,9 @@
 (use-package fountain-mode
 	:mode "\\.ftn\\'")
 
+(use-package graphviz-dot-mode
+	:mode "\\.dot\\'")
+
 (use-package hy-mode
 	:mode "\\.hy\\'")
 
@@ -197,11 +200,17 @@ GFM Markdown table"
 	(shell-command-on-region start end "gfm_table_format" t t)
 	(table-unrecognize))
 
+(defun my/setup-org-mode ()
+	(visual-line-mode)
+	(turn-off-auto-fill))
+
 (defun my/setup-text-mode ()
+	(visual-line-mode)
 	(toggle-word-wrap)
-	(turn-on-auto-fill)
-	;; (flyspell-mode)
-	(add-hook 'before-save-hook #'ispell-buffer nil t))
+	;; (turn-on-auto-fill)
+	)
+;; (flyspell-mode)
+;; (add-hook 'before-save-hook #'ispell-buffer nil t))
 
 (defun my/setup-tex-mode ()
 	(auto-fill-mode -1)
@@ -219,6 +228,7 @@ GFM Markdown table"
 (require 'gnu-apl-mode)
 
 ;;; HOOKS
+(add-hook 'org-mode-hook #'my/setup-org-mode)
 (add-hook 'prog-mode-hook #'my/setup-prog-mode)
 (add-hook 'text-mode-hook #'my/setup-text-mode)
 (add-hook 'tex-mode-hook #'my/setup-tex-mode)
@@ -291,7 +301,9 @@ GFM Markdown table"
 	("H-v" . add-file-local-variable-prop-line)
 	("H-p" . previous-buffer)
 	("H-n" . next-buffer)
-	("H-s" . eshell))
+	("H-s" . eshell)
+	;; org mode
+	("C-c a" . org-agenda))
 
 (defhydra hydra-window-and-buffer (global-map "<f7>")
 	"manage windows and buffers"

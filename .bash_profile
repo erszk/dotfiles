@@ -8,7 +8,7 @@ function prompt() {
 	RED="\[$(tput setaf 9)\]"
 	R="\[$(tput sgr0)\]" # reset
 	printf -v LAMBDA "%s\u03bb%s" "$RED" "$R"
-	echo "$GREEN\!$R $BOLD<\A>$R$CYAN\u$R@\h $RED\W$R\n$LAMBDA "
+	echo "$GREEN\!$R $BOLD<\A>$R $CYAN\u$R@\h $RED\W$R\n$LAMBDA "
 }
 export PS1="$(prompt)" PS2="-> "
 unset prompt

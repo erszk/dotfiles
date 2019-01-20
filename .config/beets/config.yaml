@@ -23,10 +23,7 @@ replace:
   '\s+$': ''
   '^\s+': ''
 
-plugins: fetchart the missing duplicates play edit ftintitle
-
-fetchart:
-    auto: no
+plugins: the missing duplicates play edit ftintitle
 
 play:
   command: mpv

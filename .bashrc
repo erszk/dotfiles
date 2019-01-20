@@ -29,10 +29,10 @@ alias lla="ll -A"
 alias lr="l -R"
 alias lra="lr -A"
 # dir stack manipulation (inspired by Forth)
-function swap() { pushd "$@" >/dev/null; }
-function drop() { popd "$@" >/dev/null; }
-function pick() { swap "${DIRSTACK[$1]}"; }
-function roll() {
+swap () { pushd "$@" >/dev/null; }
+drop () { popd "$@" >/dev/null; }
+pick () { swap "${DIRSTACK[$1]}"; }
+roll () {
 	local -i i="$1"
 	pick "$i" && let 'i++' && drop "+${i}"
 }
@@ -43,7 +43,7 @@ alias nip="drop +1 && dirs"
 alias tuck="swap && over"
 alias rot="roll 2 && dirs"
 alias tor="swap && swap +1 && swap && swap -0 && dirs"
-function ndrop() {
+ndrop () {
 	local -i i=0 bound="${1:-1}"
 	for ((; i<bound; i++)); do
 		drop
@@ -69,7 +69,7 @@ alias top='top -o cpu'
 
 #### OTHER
 alias ct='VISUAL=vim crontab'
-alias dot="git --git-dir=$HOME/.files/ --work-tree=$HOME"
+alias rc="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias h='history'
 alias ihr='du -hcd0'
 alias j='jobs'
@@ -86,7 +86,7 @@ alias wheniseaster='ncal -e'
 # crude dictionary search
 # function dct() { grep -Ei '$*\W' ~/Documents/wb.txt; }
 # prevent computer from falling asleep while bash/pid running
-function woke() {
+woke () {
 	local pid
 	if (($# == 0)); then
 		pid="$$"
@@ -95,9 +95,9 @@ function woke() {
 	fi
 	caffeinate -disuw "$pid"
 }
-function pstat() { echo "${PIPESTATUS[@]}"; }
+pstat () { echo "${PIPESTATUS[@]}"; }
 # quickly traverse up directories
-function u() {
+u () {
 	local -i i=0 bound="${1:-1}"
 	((! bound && bound++))
 
@@ -112,7 +112,7 @@ function u() {
 }
 
 # resize terminal; escape \rs to use rs(1)
-function rs() {
+rs () {
 	local cols="${1:-80}" lines="${2:-24}"
 	printf "\e[8;%d;%dt" "$lines" "$cols"
 }
@@ -122,7 +122,6 @@ function rs() {
 alias bccl='brew cask cleanup'
 alias bch='brew cask home'
 alias bci='brew cask info'
-alias bcs='brew cask search'
 alias brau='brew update && brew upgrade --ignore-pinned && brcl'
 alias brcl='brew cleanup -s && brew prune'
 alias bd='brew deps --tree --installed'
@@ -142,14 +141,14 @@ alias t='trash'
 alias tac='tail -r'
 
 # cd to directory open in *topmost* Finder window
-function cdf() {
+cdf () {
 	cd -- "$(osascript -e \
 		"tell application \"Finder\"
 			POSIX path of (target of window 1 as alias)
 		end tell")"
 }
 
-function o() {
+o () {
 	if ((! $#)); then
 		open ./
 	else
@@ -160,31 +159,31 @@ function o() {
 # coordinates of mouse cursor
 alias maus='cliclick p'
 # RGB color value of pixel at cursor point
-function rgb() { cliclick "cp:$(maus)"; }
+rgb () { cliclick "cp:$(maus)"; }
 #### END MacOS
 
 #### Temps
-function hh() {
+hh () {
 	eval "$(history | fzf --tac +s \
 				| awk '{$1=""; print substr($0,2);}')"
 }
 
-function fk() {
+fk () {
 	ps -axo pid,%cpu,command \
 		| fzf --header-lines=1 --query="$1" \
 		| awk '{print $1}' | xargs kill -"${2:-9}"
 }
 
-function save() {
+save () {
 	while (($#)); do
 		case "$(type -t "$1")" in
 			alias)
-				alias "$1" | tee -a .bashrc;;
+				alias "$1" | tee -a ~/.bashrc;;
 			function)
-				declare -f "$1" | tee -a .bashrc;;
+				declare -f "$1" | tee -a ~/.bashrc;;
 			*)
 				if declare -p "$1" >/dev/null; then
-					declare -p "$1" | tee -a .bash_profile
+					declare -p "$1" | tee -a ~/.bash_profile
 				else
 					printf \
 						"\tnot a function/alias/variable: %s\n" "$1"
@@ -194,8 +193,8 @@ function save() {
 	done
 }; complete -afv save
 
-function funced() { eval "$(declare -f "$1" | vipe)"; }
-function pp () {
+funced () { eval "$(declare -f "$1" | vipe)"; }
+pp () {
 	while (($#)); do
 		case "$(type -t "$1")" in
 			alias)
@@ -217,10 +216,5 @@ function pp () {
 	done
 }; complete -afbcv pp
 
-function album() {
-	find ~/Music/beets -depth 2 -type d -print0 \
-		| sort -rz \
-		| fzf --read0 --query="$*" \
-			  -d/ --with-nth=6.. --preview='ls -1 {}' \
-		| cut -d/ -f6- | mpc add && mpc play
-}
+# alias cl='clisp -norc -q'
+alias nuke='history -c; hash -r'
