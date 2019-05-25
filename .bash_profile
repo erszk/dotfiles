@@ -20,7 +20,7 @@ if command -v go >/dev/null && [ -d "$HOME/code/go" ]; then
 	PATH="$GOPATH/bin:$PATH"
 fi
 [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
-test -d /usr/local/opt/gnu-getopt/bin \
+[ -d /usr/local/opt/gnu-getopt/bin ] \
 	&& PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
 #### Perl - bootstrap @INC
@@ -38,7 +38,6 @@ export VISUAL="emacsclient -c"
 #### locale
 export LANG="de_DE.UTF-8"
 export LC_ALL="$LANG"
-# export LC_COLLATE="C" LC_CTYPE="C"
 
 #### misc
 export LESS="-iR"		# smart case
@@ -53,8 +52,6 @@ export FZF_DEFAULT_OPTS="--border --inline-info --exact --multi
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export SHELL_SESSION_HISTORY=0
 export NNN_COPIER="copier"
-export NNN_OPENER="open"
-export NNN_DE_FILE_MANAGER="open"
 
 # For BSD-style ls
 export CLICOLOR=1

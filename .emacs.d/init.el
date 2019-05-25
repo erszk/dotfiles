@@ -28,7 +28,10 @@
 	:defer t
 	:init (add-hook 'prog-mode-hook #'aggressive-indent-mode)
 	:pin gnu
-	:diminish aggressive-indent-mode)
+	:diminish aggressive-indent-mode
+	:config	(mapc
+						(lambda (mode) (add-to-list 'aggressive-indent-mode mode))
+						'(python-mode makefile-mode)))
 
 ;; advanced movement (can move across windows)
 ;; NB - dependency of ace-link
@@ -97,13 +100,13 @@
 	:bind ("C-c g" . magit-status))
 
 (use-package markdown-mode
-	;; autoload on markdown, default to GFM
-	:commands (markdown-mode gfm-mode)
-	:mode (("README\\.md\\'" . gfm-mode)
-					("\\.md\\'" . markdown-mode))
-	:bind (:map gfm-mode
-					("C-c C-x x" . my/table-gfm-export)
-					("C-c C-x c" . my/table-gfm-capture)))
+	;; autoload on markdown
+	:commands (markdown-mode)
+	:mode (("\\.md\\'" . markdown-mode))
+	;; :bind (:map gfm-mode
+	;;				("C-c C-x x" . my/table-gfm-export)
+	;;				("C-c C-x c" . my/table-gfm-capture))
+	)
 
 ;; improve on M-x package-list
 (use-package paradox
@@ -183,32 +186,39 @@
 
 ;;; MISC.
 ;;; FUNCTIONS/MACROS
+(defun my/new-brief (name)
+	"create new legal brief"
+	(interactive "F")
+	(copy-file "~/gdrive/chaffey/schablonen/brief.tex" name)
+	(find-file name))
 
-(defun my/table-gfm-capture (start end)
-	"convert Markdown table to Emacs table
+(if nil
+	(defun my/table-gfm-capture (start end)
+		"convert Markdown table to Emacs table
 there should be no pipes beginning or ending the line,
 although this is valid syntax. Loses justification."
-	(interactive "r")
-	;; should prompt user for justification
-	(table-capture start end "|"
-		"[\n][:|-]*" 'center))
+		(interactive "r")
+		;; should prompt user for justification
+		(table-capture start end "|"
+			"[\n][:|-]*" 'center)))
 
-(defun my/table-gfm-export (start end)
-	"uses AWK script to convert Emacs table to
+(if nil
+	(defun my/table-gfm-export (start end)
+		"uses AWK script to convert Emacs table to
 GFM Markdown table"
-	(interactive "r")
-	(shell-command-on-region start end "gfm_table_format" t t)
-	(table-unrecognize))
+		(interactive "r")
+		(shell-command-on-region start end "gfm_table_format" t t)
+		(table-unrecognize)))
+
+(defun my/setup-makefile-mode ()
+	(aggressive-indent-mode -1))
 
 (defun my/setup-org-mode ()
-	(visual-line-mode)
 	(turn-off-auto-fill))
 
 (defun my/setup-text-mode ()
-	(visual-line-mode)
-	(toggle-word-wrap)
-	;; (turn-on-auto-fill)
-	)
+	(toggle-word-wrap))
+
 ;; (flyspell-mode)
 ;; (add-hook 'before-save-hook #'ispell-buffer nil t))
 
@@ -228,6 +238,7 @@ GFM Markdown table"
 (require 'gnu-apl-mode)
 
 ;;; HOOKS
+(add-hook 'makefile-mode-hook #'my/setup-makefile-mode)
 (add-hook 'org-mode-hook #'my/setup-org-mode)
 (add-hook 'prog-mode-hook #'my/setup-prog-mode)
 (add-hook 'text-mode-hook #'my/setup-text-mode)
@@ -270,6 +281,7 @@ GFM Markdown table"
 (setq-default tab-width 4)
 
 ;;; MODES
+(global-visual-line-mode t)
 (global-hl-line-mode t)			; highlight the line the cursor is on
 (global-linum-mode 1)			; line numbering everywhere
 (menu-bar-mode -1)
@@ -303,7 +315,8 @@ GFM Markdown table"
 	("H-n" . next-buffer)
 	("H-s" . eshell)
 	;; org mode
-	("C-c a" . org-agenda))
+	("C-c a" . org-agenda)
+	("C-c d b" . my/new-brief))
 
 (defhydra hydra-window-and-buffer (global-map "<f7>")
 	"manage windows and buffers"

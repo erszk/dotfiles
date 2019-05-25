@@ -10,4 +10,4 @@ $pdf_mode = 1;
 $clean_ext = '%R.run.xml %R.synctex.gz';
 
 # use bibtex and synctex by default
-$pdflatex = 'pdflatex -bibtex -synctex %0 %S';
+# $pdflatex = 'pdflatex -bibtex -synctex %0 %S';
