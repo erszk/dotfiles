@@ -28,7 +28,7 @@
  '(org-agenda-files (quote ("~/gdrive/chaffey/s19.org")))
 	'(package-selected-packages
 		 (quote
-			 (rubik graphviz-dot-mode powershell forth-mode hy-mode editorconfig atomic-chrome lua-mode fish-mode fountain-mode haskell-mode abc-mode apples-mode yaml-mode csv-mode yasnippet aggressive-indent ace-link company auctex-latexmk agressive-indent markdown-mode auctex expand-region which-key paradox use-package typit magit paredit slime)))
+			 (web-mode emmet emmet-mode rubik graphviz-dot-mode forth-mode hy-mode editorconfig lua-mode fountain-mode haskell-mode abc-mode yaml-mode csv-mode yasnippet aggressive-indent ace-link company agressive-indent markdown-mode expand-region which-key paradox use-package typit magit paredit slime)))
  '(paradox-github-token t))
 
 (custom-set-faces

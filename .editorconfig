@@ -14,5 +14,5 @@ tab_width = 4
 indent_style = space
 indent_size = 4
 
-[*.{cl,lisp,scm,el}]
+[*.{cl,lisp,scm,el,html,xml,php}]
 tab_width = 2

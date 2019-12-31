@@ -59,7 +59,7 @@ export LSCOLORS="GxFxHxHxCxdgedabagacad"
 
 # ensure US keyboard is being used
 if command -v issw >/dev/null; then
-	issw com.apple.keylayout.USExtended >/dev/null
+	issw com.apple.keylayout.USExtended >/dev/null 2>&1
 fi
 #### END MacOS
 
