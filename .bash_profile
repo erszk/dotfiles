@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 #### prompts
-function prompt() {
-	local BOLD CYAN GREEN RED R LAMBDA
-	BOLD="\[$(tput bold)\]"
-	CYAN="\[$(tput setaf 6)\]"
-	GREEN="\[$(tput setaf 2)\]"
-	RED="\[$(tput setaf 9)\]"
-	R="\[$(tput sgr0)\]" # reset
-	printf -v LAMBDA "%s\u03bb%s" "$RED" "$R"
-	echo "$GREEN\!$R $BOLD<\A>$R $CYAN\u$R@\h $RED\W$R\n$LAMBDA "
+set_prompt () {
+	local status="$?"
+	local bold cyan green red r prompt fail=""
+	bold='\[\e[1m\]' cyan='\[\e[36m\]'
+	green='\[\e[32m\]' red='\[\e[91m\]'
+	r='\[\e(B\e[m\]'
+
+	if ((status)); then
+		printf -v fail '\U274C %s%d%s ' "$red" "$status" "$r"
+	fi
+	printf -v PS1 '%b\\!%b %b[\\A]%b %b\\u%b %b\\w%b\n%b; ' \
+		   "$green" "$r" "$bold" "$r" "$cyan" "$r" "$red" "$r" "$fail"
 }
-export PS1="$(prompt)" PS2="-> "
-unset prompt
+export PROMPT_COMMAND=set_prompt
+export PROMPT_DIRTRIM=3
+export PS2="-> "
 
 #### the way, the truth and the light
 export PATH
@@ -43,7 +47,7 @@ export LC_ALL="$LANG"
 export LESS="-iR"		# smart case
 export LESSHISTFILE="/dev/null"
 export GREP_OPTIONS="--color=auto"
-export FZF_DEFAULT_OPTS="--border --inline-info --exact --multi
+export FZF_DEFAULT_OPTS="--border=bottom --inline-info
 	--bind ctrl-j:page-down,ctrl-k:page-up,alt-j:jump-accept
 	--bind ctrl-i:select-all,ctrl-o:deselect-all,ctrl-t:top
 	--filepath-word --tiebreak=length,end,begin"

@@ -5,64 +5,61 @@ set -o noclobber		# use >| to overwrite files
 # shopt -s cdable_vars
 shopt -s cdspell
 shopt -s checkhash
+shopt -s extglob
 shopt -s failglob
 shopt -s histreedit
 shopt -s lithist
 shopt -s nocaseglob
 shopt -s no_empty_cmd_completion
 shopt -s shift_verbose
-
-if (("$BASH_VERSINFO" >= 4)); then
-	shopt -s autocd
-	shopt -s checkjobs
-	shopt -s dirspell
-	shopt -s globstar
-fi
+# REQUIRES BASH 4
+shopt -s autocd
+shopt -s checkjobs
+shopt -s dirspell
+shopt -s globstar
 
 #### General
 # ls
 alias l="ls -F"
 alias la="l -A"
-alias ll="l -lh"
-alias lla="ll -A"
+alias ll="l -lSh"
 # dir stack manipulation (inspired by Forth)
+cd () { builtin cd "$@" && update_terminal_cwd; }
+pushd () { builtin pushd "$@" && update_terminal_cwd; }
+popd () { builtin popd "$@" && update_terminal_cwd; }
 pick () { pushd "${DIRSTACK[$1]}"; }
-rot () { pick 2 >/dev/null && pushd +3; }
-alias p="pushd" #; complete -o nospace -F _cd p
+alias p="pushd"
 alias d="dirs -v"
-alias over="pick 1"
 alias nip="popd +1"
+alias over="pick 1"
 alias tuck="pushd >/dev/null && over"
-
-#### PERL
-# alias newpm="h2xs -AX --skip-exporter --use-new-tests -n"
-alias pd="perldoc"
+alias rot="pick 2 >/dev/null && popd +3"
 
 #### NETWORK
 alias exip='dig +short myip.opendns.com @resolver1.opendns.com'
 alias inip='ipconfig getifaddr en0'
 
 #### WRAPPERS
-alias rlwrap='rlwrap -np red -H /dev/null'
+alias clisp='clisp -norc -q'
 alias dc='rlwrap dc'
+alias rlwrap='rlwrap -np red -H /dev/null'
 alias sbcl='rlwrap sbcl --noinform'
 alias sftp='rlwrap sftp'
 alias top='top -o cpu'
 
 #### OTHER
-alias rc="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias h='history'
-alias ihr='du -hcd0'
 alias j='jobs'
-# alias kmax='emacsclient -e "(kill-emacs)"'
-# alias mptest='mpv --input-test --force-window --idle'
+alias lm='latexmk -pdf -pv'
+alias nuke='history -c; hash -r; LINENO=1'
+alias pd="perldoc"
+alias rc="git --git-dir=$HOME/.files/ --work-tree=$HOME"
 alias scat='source-highlight -f esc -o /dev/stdout -i'
 alias serve='python3 -m http.server'
 alias x='chmod u+x'
-#### SILLY
-alias wheniseaster='ncal -e'
 
 #### FUNCTIONS
+m () { mpv "$(pbpaste)"; }
 # prevent computer from falling asleep while bash/pid running
 woke () {
 	local pid
@@ -98,14 +95,13 @@ rs () {
 #### BEGIN MacOS
 ## BREW RELATED
 alias b='brew'
-alias brau='brew update; brew upgrade --ignore-pinned && brcl'
-alias brcl='brew cleanup -s && brew cleanup --prune-prefix'
+alias brau='brew update; brew upgrade --ignore-pinned; brew upgrade --cask; brcl'
+alias brcl='brew cleanup -s; brew cleanup --prune-prefix'
 
 alias a='open -a'
-alias ffx='/Applications/Firefox.app/Contents/MacOS/firefox-bin'
+alias bt='blueutil --power toggle'
 alias pbcl='echo | pbcopy'
 alias pbed='pbpaste | vipe | pbcopy'
-alias shuf='perl -MList::Util -e "print List::Util::shuffle <>;"'
 alias t='trash'
 alias tac='tail -r'
 
@@ -129,16 +125,14 @@ o () {
 rgb () { cliclick "cp:$(cliclick p)"; }
 #### END MacOS
 
-#### Temps
 hh () {
-	eval "$(history | fzf --tac +s \
-				| awk '{$1=""; print substr($0,2);}')"
+	eval "$(history | fzf --tac +s | awk '{$1=""; print substr($0,2);}')"
 }
 
 fk () {
 	ps -axo pid,%cpu,command \
 		| fzf --header-lines=1 --query="$1" \
-		| awk '{print $1}' | xargs kill -"${2:-9}"
+		| awk '{print $1}' | xargs kill -"${2:-9}" 2>/dev/null
 }
 
 # TODO: allow for different file other than .bashrc?
@@ -153,8 +147,7 @@ save () {
 				if declare -p "$1" >/dev/null; then
 					declare -p "$1" | tee -a ~/.bash_profile
 				else
-					printf \
-						"\tnot a function/alias/variable: %s\n" "$1"
+					printf "\tnot a function/alias/variable: %s\n" "$1"
 				fi
 		esac
 		shift
@@ -183,8 +176,3 @@ pp () {
 		shift
 	done
 }; complete -afbcv pp
-
-alias clisp='clisp -norc -q'
-alias nuke='history -c; hash -r; LINENO=1'
-# alias conv='soffice --headless --invisible --convert-to'
-alias lm='latexmk -pdf -pv'
