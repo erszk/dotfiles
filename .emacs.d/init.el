@@ -144,8 +144,8 @@
 	(setq
 		slime-net-coding-system 'utf-8-unix
 		slime-lisp-implementations
-		'((clisp ("/usr/local/bin/clisp" "-q" "-I"))
-			 (sbcl ("/usr/local/bin/sbcl" "--noinform"))
+		'((sbcl ("/usr/local/bin/sbcl" "--noinform"))
+			 (clisp ("/usr/local/bin/clisp" "-q" "-I"))
 			 (ccl ("/usr/local/bin/ccl64" "--quiet")))
 		slime-contribs '(slime-fancy))
 	:config

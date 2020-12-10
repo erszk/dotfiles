@@ -27,6 +27,7 @@ $endif
 set bell-style visible
 set completion-query-items 30
 set page-completions off
+set enable-bracketed-paste on
 
 # allow input of UTF-8 chars
 # see: https://stackoverflow.com/questions/4606570/os-x-terminal-utf-8-issues#5897729
